@@ -158,6 +158,20 @@ TDROOT=$OEROOT
 # templateconf uses this value, but only on initial setup
 export DISTRO
 
+if [ -z "$TEMPLATECONF" ] && ! [ -e "$BUILDDIR/conf/templateconf.cfg" ]; then
+    # If our templateconf isn't setup yet, either in environment or in
+    # a previous build setup, provide some options for this
+    if [ -e "$TDROOT/meta-$DISTRO/.templateconf" ]; then
+        source "$TDROOT/meta-$DISTRO/.templateconf"
+        echo "Using templates in $TDROOT/$TEMPLATECONF based on settings in $TDROOT/meta-$DISTRO/.templateconf"
+    else
+        echo "Using templateconf in $TDROOT/.templateconf for distro template paths."
+        echo "You can instead use a custom distro templateconf by defining "
+        echo "at $TDROOT/meta-$DISTRO/.templateconf, deleting your "
+        echo "$BUILDDIR/conf/templateconf.cfg file, and re-running the script"
+    fi
+fi
+
 . $OEROOT/openembedded-core/oe-init-build-env $CWD/$BUILDDIR > /dev/null
 
 # if conf/local.conf not generated, no need to go further
